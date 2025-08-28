@@ -5,9 +5,16 @@
 
 set -e  # Exit on any error
 
-echo "🚀 Publishing tonic-fabricate to PRODUCTION PyPI..."
-echo "⚠️  WARNING: This will publish to the live PyPI registry!"
-echo "=================================================="
+# Check if running in GitHub Actions
+if [ "$GITHUB_ACTIONS" = "true" ]; then
+    echo "🚀 Publishing tonic-fabricate to PRODUCTION PyPI via GitHub Actions..."
+    INTERACTIVE_MODE=false
+else
+    echo "🚀 Publishing tonic-fabricate to PRODUCTION PyPI..."
+    echo "⚠️  WARNING: This will publish to the live PyPI registry!"
+    echo "=================================================="
+    INTERACTIVE_MODE=true
+fi
 
 # Check if we're in the right directory
 if [ ! -f "pyproject.toml" ]; then
@@ -25,11 +32,15 @@ if [ "$CURRENT_VERSION" = "0.0.0" ]; then
     echo "   This is typically a development version."
     echo "   Consider updating to a proper version (e.g., 1.0.0) before publishing."
     echo ""
-    read -p "Do you want to continue with version 0.0.0? (y/N): " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo "❌ Cancelled. Please update the version in pyproject.toml and fabricate_client/__init__.py"
-        exit 1
+    if [ "$INTERACTIVE_MODE" = "true" ]; then
+        read -p "Do you want to continue with version 0.0.0? (y/N): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo "❌ Cancelled. Please update the version in pyproject.toml and fabricate_client/__init__.py"
+            exit 1
+        fi
+    else
+        echo "ℹ️  In GitHub Actions mode - continuing with version 0.0.0"
     fi
 fi
 
@@ -40,15 +51,19 @@ echo "   ✅ Version: $CURRENT_VERSION"
 echo "   ✅ Target: Production PyPI (https://pypi.org/)"
 echo "   ✅ Package: tonic-fabricate"
 echo ""
-echo "⚠️  IMPORTANT: Once published, you CANNOT:"
-echo "   - Delete or modify this version"
-echo "   - Re-upload the same version number"
-echo ""
-read -p "Are you sure you want to publish to PRODUCTION PyPI? (y/N): " -n 1 -r
-echo
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    echo "❌ Cancelled. Use ./publish-test.sh for testing first."
-    exit 1
+if [ "$INTERACTIVE_MODE" = "true" ]; then
+    echo "⚠️  IMPORTANT: Once published, you CANNOT:"
+    echo "   - Delete or modify this version"
+    echo "   - Re-upload the same version number"
+    echo ""
+    read -p "Are you sure you want to publish to PRODUCTION PyPI? (y/N): " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "❌ Cancelled. Use ./publish-test.sh for testing first."
+        exit 1
+    fi
+else
+    echo "ℹ️  Running in GitHub Actions - skipping interactive confirmation"
 fi
 
 # Check if virtual environment exists, create if not
@@ -92,24 +107,34 @@ if [ $? -ne 0 ]; then
 fi
 
 # Final confirmation
-echo ""
-echo "🚨 FINAL CONFIRMATION 🚨"
-echo "You are about to publish tonic-fabricate v$CURRENT_VERSION to PRODUCTION PyPI"
-echo ""
-read -p "Type 'PUBLISH' to confirm: " CONFIRM
+if [ "$INTERACTIVE_MODE" = "true" ]; then
+    echo ""
+    echo "🚨 FINAL CONFIRMATION 🚨"
+    echo "You are about to publish tonic-fabricate v$CURRENT_VERSION to PRODUCTION PyPI"
+    echo ""
+    read -p "Type 'PUBLISH' to confirm: " CONFIRM
 
-if [ "$CONFIRM" != "PUBLISH" ]; then
-    echo "❌ Cancelled. Confirmation not received."
-    exit 1
+    if [ "$CONFIRM" != "PUBLISH" ]; then
+        echo "❌ Cancelled. Confirmation not received."
+        exit 1
+    fi
+else
+    echo ""
+    echo "🚨 PROCEEDING WITH GITHUB ACTIONS PUBLISH 🚨"
+    echo "Publishing tonic-fabricate v$CURRENT_VERSION to PRODUCTION PyPI"
 fi
 
 # Upload to production PyPI
 echo ""
 echo "📤 Uploading to PRODUCTION PyPI..."
-echo "📝 You will be prompted for credentials:"
-echo "   Username: __token__"
-echo "   Password: your-pypi-api-token (including pypi- prefix)"
-echo ""
+if [ "$INTERACTIVE_MODE" = "true" ]; then
+    echo "📝 You will be prompted for credentials:"
+    echo "   Username: __token__"
+    echo "   Password: your-pypi-api-token (including pypi- prefix)"
+    echo ""
+else
+    echo "📝 Using PyPI API token from GitHub Actions environment"
+fi
 
 twine upload dist/*
 
