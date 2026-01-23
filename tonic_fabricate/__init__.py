@@ -20,4 +20,4 @@ __all__ = [
     "WorkflowFile",
     "WorkflowTask",
     "WorkflowResult",
-] 
+]
