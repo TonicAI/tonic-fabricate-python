@@ -6,7 +6,6 @@ on:
 jobs:
   codex:
     runs-on: ubuntu-24.04
-    if: contains(github.event.pull_request.labels.*.name, 'ai_review')
     
     permissions:
       contents: read
