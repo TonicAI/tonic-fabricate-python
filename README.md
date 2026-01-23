@@ -109,12 +109,80 @@ The client will automatically use the following environment variables if they ar
 - `FABRICATE_API_KEY`: Your Fabricate API key
 - `FABRICATE_API_URL`: The Fabricate API URL (defaults to https://fabricate.tonic.ai/api/v1)
 
+## Workflows
+
+Fabricate supports workflows that can perform custom operations and generate files. To run a workflow:
+
+```python
+from tonic_fabricate import run_workflow
+
+result = run_workflow(
+    # The workspace to use
+    workspace='Default',
+
+    # The name of the database
+    database='my_database',
+
+    # The name of the workflow to run
+    workflow='my_workflow',
+
+    # Optional: Parameters to pass to the workflow
+    params={
+        'message': 'Hello, world!',
+    },
+)
+
+# Access the workflow result
+print(f"Result: {result.result}")
+
+# Download generated files if any
+if result.task.files:
+    for file in result.task.files:
+        print(f"File: {file.name} ({file.size} bytes)")
+        result.download_file(file.id, f"./output/{file.name}")
+
+    # Or download all files at once
+    result.download_all_files('./output')
+```
+
+### Workflow Progress Tracking
+
+```python
+from tonic_fabricate import run_workflow
+
+def on_progress(data):
+    status = data.get('status', '')
+    message = data.get('message', '')
+    print(f"[{status}] {message}")
+
+result = run_workflow(
+    workspace='Default',
+    database='my_database',
+    workflow='my_workflow',
+    on_progress=on_progress
+)
+```
+
+### Workflow File Downloads
+
+You can also download workflow files directly using `download_workflow_file`:
+
+```python
+from tonic_fabricate import download_workflow_file
+
+download_workflow_file(
+    task_id='your-task-id',
+    file_id=123,
+    dest_path='./output/file.txt'
+)
+```
+
 ## Error Handling
 
 The client raises appropriate exceptions for various error conditions:
 
 ```python
-from tonic_fabricate import generate
+from tonic_fabricate import generate, run_workflow
 
 try:
     generate(
@@ -127,4 +195,15 @@ except ValueError as e:
     print(f"Invalid parameters: {e}")
 except Exception as e:
     print(f"Generation failed: {e}")
+
+try:
+    result = run_workflow(
+        workspace='Default',
+        database='my_database',
+        workflow='my_workflow'
+    )
+except ValueError as e:
+    print(f"Invalid parameters: {e}")
+except Exception as e:
+    print(f"Workflow failed: {e}")
 ```
