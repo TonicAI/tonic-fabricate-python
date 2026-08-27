@@ -49,7 +49,16 @@ FABRICATE_API_URL=https://fabricate.tonic.ai/api/v1
 Verify the module imports correctly:
 
 ```bash
-python -c "from tonic_fabricate import generate, run_workflow, WorkflowResult; print('All imports work!')"
+python -c "from tonic_fabricate import generate, run_workflow, AgentEvalsClient; print('All imports work!')"
+```
+
+### Run Unit Tests
+
+The Agent Evals client tests use a local HTTP server and do not require
+Fabricate credentials:
+
+```bash
+python -m pytest
 ```
 
 ### Run the Examples
@@ -62,6 +71,9 @@ python examples/download.py
 
 # Test the workflow function
 python examples/workflow.py
+
+# Test Agent Evals against a configured Fabricate project and suite
+python examples/agent_evals.py
 ```
 
 ### Interactive Testing
@@ -119,10 +131,10 @@ Before publishing to production PyPI, test with TestPyPI:
 ./publish-test.sh
 
 # Install from TestPyPI to verify
-pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ tonic-fabricate==1.1.0
+pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ tonic-fabricate==1.2.0
 
 # Test the installed package
-python -c "from tonic_fabricate import generate, run_workflow; print('Package works!')"
+python -c "from tonic_fabricate import generate, run_workflow, AgentEvalsClient; print('Package works!')"
 ```
 
 ## Publishing
