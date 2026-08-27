@@ -30,7 +30,7 @@ pip install --upgrade pip build twine
 
 # Clean previous builds
 echo "🧹 Cleaning previous builds..."
-rm -rf dist/ build/ *.egg-info fabricate_client.egg-info/
+rm -rf dist/ build/ *.egg-info tonic_fabricate.egg-info/
 
 # Build the package
 echo "🔨 Building package..."
@@ -64,7 +64,7 @@ if [ $? -eq 0 ]; then
     echo "   pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ tonic-fabricate"
     echo ""
     echo "2. Test the package:"
-    echo "   python -c \"from fabricate_client import generate; print('Package works!')\""
+    echo "   python -c \"from tonic_fabricate import generate, run_workflow, AgentEvalsClient; print('Package works!')\""
     echo ""
     echo "3. View on TestPyPI:"
     echo "   https://test.pypi.org/project/tonic-fabricate/"

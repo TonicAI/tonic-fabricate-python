@@ -6,12 +6,12 @@ Your package is **ready for publication**! The package structure includes:
 
 - Modern `pyproject.toml` configuration
 - Legacy `setup.py` for compatibility
-- Proper package structure with `fabricate_client/`
+- Proper package structure with `tonic_fabricate/`
 - README.md with usage documentation
 - MANIFEST.in for including additional files
-- Version management (currently v1.0.0)
+- Version management (currently v1.2.0)
 - Package name: `tonic-fabricate`
-- Import name: `fabricate_client`
+- Import name: `tonic_fabricate`
 
 ## 🚀 Publishing Process
 
@@ -45,32 +45,36 @@ You'll need accounts on:
 
 #### **3. Update Version Number (if needed)**
 
-Simply update the version in **one place** - `pyproject.toml`:
+The version lives in **two places** that must be kept in sync:
 
 ```toml
 # In pyproject.toml (line 7)
 version = "x.y.z"
 ```
 
+```python
+# In tonic_fabricate/__init__.py
+__version__ = "x.y.z"
+```
+
 **Quick update command:**
 
 ```bash
-# Example: Update from 1.0.0 to 1.0.1
-sed -i '' 's/version = "1.0.0"/version = "1.0.1"/' pyproject.toml
+# Example: Update from 1.2.0 to 1.2.1
+sed -i '' 's/version = "1.2.0"/version = "1.2.1"/' pyproject.toml
+sed -i '' 's/__version__ = "1.2.0"/__version__ = "1.2.1"/' tonic_fabricate/__init__.py
 
 # Verify the change
-grep "version =" pyproject.toml
+grep '^version = ' pyproject.toml
+grep '^__version__ = ' tonic_fabricate/__init__.py
 ```
 
-✅ **Single Source of Truth:** The other files (`setup.py` and `__init__.py`) automatically read the version from `pyproject.toml` at build time and runtime using the `tomllib`/`tomli` library.
+⚠️ **Two places, not one:** `setup.py` reads the version from `pyproject.toml` at build time via `tomllib`/`tomli`, so it needs no edit. But `tonic_fabricate/__init__.py` hardcodes `__version__` and will silently drift if you forget it. The published artifact takes its version from `pyproject.toml`; `__version__` is what users see at runtime.
 
 #### **4. Test Publishing**
 
 ```bash
-# Navigate to the client directory
-cd /Users/mark/Code/fabricate/clients/python
-
-# Run the test publishing script
+# From the root of this repository
 ./publish-test.sh
 ```
 
@@ -86,7 +90,7 @@ You'll be prompted for:
 pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ tonic-fabricate
 
 # Test the package
-python -c "from fabricate_client import generate; print('Package works!')"
+python -c "from tonic_fabricate import generate, run_workflow, AgentEvalsClient; print('Package works!')"
 ```
 
 #### **6. Production Publishing**
@@ -117,7 +121,7 @@ You'll be prompted for:
 pip install tonic-fabricate
 
 # Test the package
-python -c "from fabricate_client import generate; print('Package installed successfully!')"
+python -c "from tonic_fabricate import generate, run_workflow, AgentEvalsClient; print('Package installed successfully!')"
 ```
 
 ### **Option 2: Automated Publishing with GitHub Actions (Recommended)**
@@ -149,8 +153,8 @@ First, you need to configure your PyPI API token as a GitHub secret:
 
    ```bash
    # Tag the current commit
-   git tag v1.0.2
-   git push origin v1.0.2
+   git tag vx.y.z
+   git push origin vx.y.z
    ```
 
 2. Go to GitHub → **Releases** → **Create a new release**
@@ -205,11 +209,11 @@ This ensures that publishing requires manual approval even when automated.
 - **MINOR** (y): New features, backward compatible (e.g., 1.0.0 → 1.1.0)
 - **MAJOR** (x): Breaking changes (e.g., 1.0.0 → 2.0.0)
 
-### **Single Source Management:**
+### **Where the version lives:**
 
-- ✅ **Only edit:** `pyproject.toml`
-- ✅ **Automatic sync:** `setup.py` and `__init__.py` read from `pyproject.toml`
-- ✅ **No version conflicts:** Impossible for versions to get out of sync
+- ✅ **Edit both:** `pyproject.toml` (`version`) and `tonic_fabricate/__init__.py` (`__version__`)
+- ✅ **Reads automatically:** `setup.py` pulls the version from `pyproject.toml` at build time
+- ⚠️ **Can drift:** `__version__` is hardcoded — nothing enforces that it matches `pyproject.toml`
 - ✅ **Modern approach:** Uses `tomllib` (Python 3.11+) or `tomli` (Python 3.8-3.10)
 
 ## 🎯 Quick Publishing Workflow
@@ -217,9 +221,9 @@ This ensures that publishing requires manual approval even when automated.
 ### **GitHub Actions (Recommended)**
 
 ```bash
-# 1. Update version in pyproject.toml (if needed)
+# 1. Update version in pyproject.toml and tonic_fabricate/__init__.py (if needed)
 # 2. Commit and push changes
-git add pyproject.toml
+git add pyproject.toml tonic_fabricate/__init__.py
 git commit -m "Bump version to x.y.z"
 git push
 
@@ -234,11 +238,10 @@ git push origin vx.y.z
 ### **Manual Publishing**
 
 ```bash
-# 1. Navigate to directory
-cd /Users/mark/Code/tonic-fabricate-python
+# 1. Start from the root of this repository
 
 # 2. Update version (if needed)
-# Edit only pyproject.toml - other files read it automatically
+# Edit pyproject.toml and tonic_fabricate/__init__.py
 
 # 3. Test publish
 ./publish-test.sh
@@ -253,8 +256,8 @@ pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://
 ## 🚨 Important Notes
 
 1. **Package Name**: Installable as `tonic-fabricate`
-2. **Import Name**: Import as `fabricate_client`
-3. **Version Update**: Only update version in `pyproject.toml`
+2. **Import Name**: Import as `tonic_fabricate`
+3. **Version Update**: Update the version in `pyproject.toml` **and** `tonic_fabricate/__init__.py`
 4. **GitHub Actions**: Requires `PYPI_API_TOKEN` secret to be configured
 5. **Always test first**: Use TestPyPI before production (manual) or test releases (GitHub Actions)
 6. **No duplicates**: You cannot upload the same version twice
@@ -278,4 +281,4 @@ pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://
 
 **Import errors after installation:**
 
-- Verify package name (`tonic-fabricate`) vs import name (`fabricate_client`)
+- Verify package name (`tonic-fabricate`) vs import name (`tonic_fabricate`)

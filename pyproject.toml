@@ -37,9 +37,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/fabricate-tools/client-python"
-Repository = "https://github.com/fabricate-tools/client-python"
-Documentation = "https://github.com/fabricate-tools/client-python#readme"
+Homepage = "https://github.com/TonicAI/tonic-fabricate-python"
+Repository = "https://github.com/TonicAI/tonic-fabricate-python"
+Documentation = "https://github.com/TonicAI/tonic-fabricate-python#readme"
 
 [tool.black]
 line-length = 88

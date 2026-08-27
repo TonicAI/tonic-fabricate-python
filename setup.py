@@ -18,7 +18,7 @@ setup(
     description="The official Fabricate client for Python",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/fabricate-tools/client-python",
+    url="https://github.com/TonicAI/tonic-fabricate-python",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",
