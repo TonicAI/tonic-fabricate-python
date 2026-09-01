@@ -4,7 +4,7 @@ import zipfile
 import shutil
 from pathlib import Path
 from typing import Optional, Callable, Dict, Any, Union, List
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from urllib.parse import quote
 import requests
 
@@ -37,8 +37,8 @@ class WorkflowResult:
     """Result of running a workflow, with helpers to download generated files."""
     result: Any
     task: WorkflowTask
-    _api_key: str
-    _api_url: str
+    _api_key: str = field(repr=False)
+    _api_url: str = field(repr=False)
 
     def download_file(self, file_id: int, dest_path: str) -> None:
         """
