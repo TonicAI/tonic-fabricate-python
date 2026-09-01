@@ -214,7 +214,7 @@ This ensures that publishing requires manual approval even when automated.
 - ✅ **Edit both:** `pyproject.toml` (`version`) and `tonic_fabricate/__init__.py` (`__version__`)
 - ✅ **Reads automatically:** `setup.py` pulls the version from `pyproject.toml` at build time
 - ⚠️ **Can drift:** `__version__` is hardcoded — nothing enforces that it matches `pyproject.toml`
-- ✅ **Modern approach:** Uses `tomllib` (Python 3.11+) or `tomli` (Python 3.8-3.10)
+- ✅ **Modern approach:** Uses `tomllib` (Python 3.11+) or `tomli` (Python 3.9-3.10)
 
 ## 🎯 Quick Publishing Workflow
 
