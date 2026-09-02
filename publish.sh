@@ -36,7 +36,7 @@ if [ "$CURRENT_VERSION" = "0.0.0" ]; then
         read -p "Do you want to continue with version 0.0.0? (y/N): " -n 1 -r
         echo
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-            echo "❌ Cancelled. Please update the version in pyproject.toml and fabricate_client/__init__.py"
+            echo "❌ Cancelled. Please update the version in pyproject.toml and tonic_fabricate/__init__.py"
             exit 1
         fi
     else
@@ -82,7 +82,7 @@ pip install --upgrade pip build twine
 
 # Clean previous builds
 echo "🧹 Cleaning previous builds..."
-rm -rf dist/ build/ *.egg-info fabricate_client.egg-info/
+rm -rf dist/ build/ *.egg-info tonic_fabricate.egg-info/
 
 # Build the package
 echo "🔨 Building package..."
@@ -147,7 +147,7 @@ if [ $? -eq 0 ]; then
     echo "   pip install tonic-fabricate"
     echo ""
     echo "2. Test the package:"
-    echo "   python -c \"from fabricate_client import generate; print('Package works!')\""
+    echo "   python -c \"from tonic_fabricate import generate, run_workflow, AgentEvalsClient; print('Package works!')\""
     echo ""
     echo "3. View on PyPI:"
     echo "   https://pypi.org/project/tonic-fabricate/"

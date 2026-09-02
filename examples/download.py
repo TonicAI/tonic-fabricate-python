@@ -7,14 +7,10 @@ import os
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from tonic_fabricate import generate
+from dotenv import load_dotenv
+load_dotenv()
 
-# Load environment variables if python-dotenv is available
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except ImportError:
-    pass
+from tonic_fabricate import generate
 
 def on_progress(data):
     """Progress callback function."""
