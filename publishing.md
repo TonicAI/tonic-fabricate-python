@@ -9,7 +9,7 @@ Your package is **ready for publication**! The package structure includes:
 - Proper package structure with `tonic_fabricate/`
 - README.md with usage documentation
 - MANIFEST.in for including additional files
-- Version management (currently v1.2.0)
+- Version management (currently v1.3.0)
 - Package name: `tonic-fabricate`
 - Import name: `tonic_fabricate`
 
@@ -45,6 +45,8 @@ You'll need accounts on:
 
 #### **3. Update Version Number (if needed)**
 
+> **GitHub Actions does this for you.** A release publish sets both values below from the release tag on the runner, so you only need the manual bump for local publishing (`./publish.sh`, `./publish-test.sh`) and to keep `main` in sync with what was released.
+
 The version lives in **two places** that must be kept in sync:
 
 ```toml
@@ -60,9 +62,9 @@ __version__ = "x.y.z"
 **Quick update command:**
 
 ```bash
-# Example: Update from 1.2.0 to 1.2.1
-sed -i '' 's/version = "1.2.0"/version = "1.2.1"/' pyproject.toml
-sed -i '' 's/__version__ = "1.2.0"/__version__ = "1.2.1"/' tonic_fabricate/__init__.py
+# Example: Update from 1.3.0 to 1.3.1
+sed -i '' 's/version = "1.3.0"/version = "1.3.1"/' pyproject.toml
+sed -i '' 's/__version__ = "1.3.0"/__version__ = "1.3.1"/' tonic_fabricate/__init__.py
 
 # Verify the change
 grep '^version = ' pyproject.toml

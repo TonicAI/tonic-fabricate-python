@@ -131,7 +131,7 @@ Before publishing to production PyPI, test with TestPyPI:
 ./publish-test.sh
 
 # Install from TestPyPI to verify
-pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ tonic-fabricate==1.2.0
+pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ tonic-fabricate==1.3.0
 
 # Test the installed package
 python -c "from tonic_fabricate import generate, run_workflow, AgentEvalsClient; print('Package works!')"
