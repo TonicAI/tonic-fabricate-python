@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       # Creating the GitHub Release for the version.
       contents: write
@@ -41,6 +41,25 @@ jobs:
             exit 1
           fi
           echo "✅ Confirmation received for manual publish"
+
+      # The tag is the source of truth for the version; the files in the repo
+      # carry whatever was last committed. These edits live and die with the
+      # runner.
+      - name: Set the version from the tag
+        run: |
+          if [ "$GITHUB_REF_TYPE" != "tag" ]; then
+            echo "Run this workflow from a v* tag, not $GITHUB_REF."
+            exit 1
+          fi
+          if ! [[ "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Tag $GITHUB_REF_NAME is not a version like v1.2.3."
+            exit 1
+          fi
+          VERSION="${GITHUB_REF_NAME#v}"
+          sed -i "s/^version = \".*\"/version = \"$VERSION\"/" pyproject.toml
+          sed -i "s/^__version__ = \".*\"/__version__ = \"$VERSION\"/" tonic_fabricate/__init__.py
+          grep -n '^version = ' pyproject.toml
+          grep -n '^__version__ = ' tonic_fabricate/__init__.py
 
       - name: Make publish script executable
         run: chmod +x publish.sh
@@ -75,11 +94,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
-          TAG="v$VERSION"
-          if gh release view "$TAG" > /dev/null 2>&1; then
-            echo "Release $TAG already exists. Skipping."
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME already exists. Skipping."
           else
-            gh release create "$TAG" dist/*.whl dist/*.tar.gz \
-              --generate-notes --target "$GITHUB_SHA"
+            gh release create "$GITHUB_REF_NAME" dist/*.whl dist/*.tar.gz \
+              --generate-notes --verify-tag
           fi
