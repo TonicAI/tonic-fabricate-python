@@ -1,5 +1,5 @@
 """
-Tonic Fabricate - The official Fabricate client for Python.
+Official Python client for Tonic Fabricate.
 """
 
 from .client import (

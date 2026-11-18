@@ -15,7 +15,7 @@ setup(
     name="tonic-fabricate",
     version=version,
     author="Fabricate Tools",
-    description="The official Fabricate client for Python",
+    description="Official Python client for Tonic Fabricate. Generate synthetic data and run workflows from code.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/TonicAI/tonic-fabricate-python",
@@ -29,6 +29,9 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Topic :: Database",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Topic :: Software Development :: Testing",
     ],
     python_requires=">=3.9",
     install_requires=[
